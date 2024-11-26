@@ -8,6 +8,7 @@ import com.tvr.booking.listeners.ItemClickListener
 import com.tvr.newsfeed.data.local.dto.PostDto
 import com.tvr.newsfeed.data.repository.PostRepository
 import com.tvr.newsfeed.features.post.adapters.PostRecyclerViewAdapter
+import com.tvr.newsfeed.features.post.adapters.UserPostRecyclerViewAdapter
 import com.tvr.newsfeed.utils.ConstData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -6,6 +6,7 @@ import com.tvr.newsfeed.data.SharedPref
 import com.tvr.newsfeed.data.local.NewsFeedDb
 import com.tvr.newsfeed.data.remote.ApiInterface
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -42,5 +43,16 @@ class UserRepository @Inject constructor(
                 emit(ViewState.Success(userResponse.body()?.let { User.toUserDto(it) }))
             }
         }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun fetchUserWithPost(id: Long) = flow {
+        val user = newsFeedDb.userDao().getUserWithPosts(id)
+        if (user!=null) {
+            emit(ViewState.Success(user))
+        } else {
+            emit(ViewState.Error("Failed"))
+        }
+    }.catch {
+        emit(ViewState.Error(it.message))
     }.flowOn(Dispatchers.IO)
 }
