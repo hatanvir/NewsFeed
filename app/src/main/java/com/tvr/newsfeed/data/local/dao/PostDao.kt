@@ -15,6 +15,9 @@ interface PostDao {
     @Query("SELECT * FROM posts ORDER BY id ASC LIMIT :limit OFFSET :offset")
     fun getPosts(limit: Int, offset: Int): List<PostDto>
 
+    @Query("SELECT posts.*, users.firstName  FROM posts LEFT JOIN users on posts.userId=users.id")
+    fun getPostsWithUser(): List<PostDto>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPosts(posts: List<PostDto>)
 }

@@ -9,6 +9,7 @@ import android.util.Log
 import com.tvr.newsfeed.data.repository.UserRepository
 import com.tvr.newsfeed.utils.ConstData
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -28,7 +29,10 @@ class UserDataFetchService :
     Service() {
     @Inject
     lateinit var userRepository: UserRepository
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        throwable.printStackTrace()
+    }
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
     val handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 

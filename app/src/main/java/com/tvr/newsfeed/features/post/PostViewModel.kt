@@ -34,41 +34,47 @@ class PostViewModel @Inject constructor(private var postRepository: PostReposito
     }
     fun fetchPosts(limit: Int, page: Int) {
         viewModelScope.launch {
-            postRepository.fetchPost(limit, page).collect {
-                when (it) {
-                    is ViewState.Loading -> {
-                        progressBarVisibility.emit(true)
-                        paginateProgressBarVisibility.emit(false)
-                        isLoading.emit(true)
-                        Log.d("LLL","LOading")
-                    }
-
-                    is ViewState.PaginationLoading -> {
-                        progressBarVisibility.emit(false)
-                        paginateProgressBarVisibility.emit(true)
-                        isLoading.emit(true)
-
-                        Log.d("LLL","LOadingPage")
-                    }
-
-                    is ViewState.Success -> {
-
-                        it.data?.let { it1 ->
-
-                            progressBarVisibility.emit(false)
+            try {
+                postRepository.fetchPost(limit, page).collect {
+                    when (it) {
+                        is ViewState.Loading -> {
+                            progressBarVisibility.emit(true)
                             paginateProgressBarVisibility.emit(false)
-                            isLoading.emit(false)
+                            isLoading.emit(true)
+                            Log.d("LLL","LOading")
+                        }
 
-                            postRecyclerViewAdapter.setData(it1,this@PostViewModel)
-                            postRecyclerViewAdapter.notifyDataSetChanged()
+                        is ViewState.PaginationLoading -> {
+                            progressBarVisibility.emit(false)
+                            paginateProgressBarVisibility.emit(true)
+                            isLoading.emit(true)
+
+                            Log.d("LLL","LOadingPage")
+                        }
+
+                        is ViewState.Success -> {
+
+                            it.data?.let { it1 ->
+                                progressBarVisibility.emit(false)
+                                paginateProgressBarVisibility.emit(false)
+                                isLoading.emit(false)
+
+                                postRecyclerViewAdapter.setData(it1,this@PostViewModel)
+                                postRecyclerViewAdapter.notifyDataSetChanged()
+                            }
+                        }
+
+                        is ViewState.Error -> {
+                            progressBarVisibility.value = false
+                            paginateProgressBarVisibility.value = false
+
+
+                            Log.d("ERRR",""+it)
                         }
                     }
-
-                    is ViewState.Error -> {
-                        progressBarVisibility.value = false
-                        paginateProgressBarVisibility.value = false
-                    }
                 }
+            }catch (e:Exception){
+
             }
         }
     }
